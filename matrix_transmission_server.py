@@ -48,8 +48,25 @@ def threaded(client_socket, addr):
             # 스레드는 프로세스 내부에서 병렬 처리를 하기 위해, 프로세스의 소스코드 내부에서 특정 함수만 따로 뽑아내어 분신을 생성하는 것임.
             # 즉 원래라면 하나의 절차를 따르며 해야하는 일들도, 스레드를 생성해서 돌릴 경우엔 동시 다발적으로 일을 할 수 있음.
             length = recvall(client_socket,16)
-            
-            print(length)
+            pickledata = recvpickle(client_socket, int(length))
+
+            length = recvall(client_socket,16)
+            bgrdata = recvall(client_socket, int(length))
+
+
+            data_arr = pickle.loads(b"".join(pickledata))
+
+
+            data = numpy.frombuffer(bgrdata, dtype="uint8")
+            decimg = cv2.imdecode(data,1)
+
+            cv2.imshow('Depth frame', data_arr)
+            cv2.imshow('Bgr frame', decimg)
+
+            key = cv2.waitKey(1)
+            if key == 27:                #esc누르면 종료
+                break
+            '''
             if(int(length)>200000):
                 pickledata = recvpickle(client_socket, int(length))
                 data_arr = pickle.loads(b"".join(pickledata))
@@ -76,6 +93,7 @@ def threaded(client_socket, addr):
                 key = cv2.waitKey(1)
                 if key == 27:                #esc누르면 종료
                     break
+                '''
 
 
 
