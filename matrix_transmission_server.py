@@ -1,3 +1,4 @@
+import pickle
 import socket 
 import cv2
 import numpy
@@ -12,6 +13,15 @@ def recvall(sock, count):
         buf += newbuf
         count -= len(newbuf)
     return buf
+
+def recvpickle(sock, count):
+    data = []
+    while count:
+        packet = sock.recv(count)
+        if not packet : return None
+        data.append(packet)
+        count -= len(packet)
+    return data
 
 
 def threaded(client_socket, addr): 
@@ -39,18 +49,34 @@ def threaded(client_socket, addr):
             # 즉 원래라면 하나의 절차를 따르며 해야하는 일들도, 스레드를 생성해서 돌릴 경우엔 동시 다발적으로 일을 할 수 있음.
             length = recvall(client_socket,16)
             
-            stringData = recvall(client_socket, int(length))
-            data = numpy.frombuffer(stringData, dtype="uint8")
+            print(length)
+            if(int(length)>200000):
+                pickledata = recvpickle(client_socket, int(length))
+                data_arr = pickle.loads(b"".join(pickledata))
+                print(data_arr)
+                cv2.imshow('Depth frame', data_arr)
+                if n <10:
+                    #cv2.imwrite('images/'+str(n)+'.jpg',decimg)
+                    n += 1
 
-            decimg = cv2.imdecode(data,1)
-            cv2.imshow('Image', decimg)
-            if n <10:
-                cv2.imwrite('images/'+str(n)+'.jpg',decimg)
-                n += 1
+                key = cv2.waitKey(1)
+                if key == 27:                #esc누르면 종료
+                    break
+            else:
+                bgrdata = recvall(client_socket, int(length))
+                data = numpy.frombuffer(bgrdata, dtype="uint8")
 
-            key = cv2.waitKey(1)
-            if key == 27:                #esc누르면 종료
-                break
+                decimg = cv2.imdecode(data,1)
+                print(decimg)
+                cv2.imshow('Bgr frame', decimg)
+                if n <10:
+                    #cv2.imwrite('images/'+str(n)+'.jpg',decimg)
+                    n += 1
+
+                key = cv2.waitKey(1)
+                if key == 27:                #esc누르면 종료
+                    break
+
 
 
 

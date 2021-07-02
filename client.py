@@ -18,9 +18,10 @@ def webcam(queue):
 
 
         encode_param=[int(cv2.IMWRITE_JPEG_QUALITY),90] #이미지 품질 90 0~100까지 설정해줄 수 있다.
+        print(len(frame))
         result, imgencode = cv2.imencode('.jpg', frame, encode_param) 
 
-        data = np.array(imgencode)
+        data = np.asanyarray(imgencode)
         stringData = data.tostring()
 
         queue.put(stringData)
