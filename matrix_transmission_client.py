@@ -39,6 +39,9 @@ def data_transmission(queue1,queue2):
         if key == 27:
             break
 
+    rs.release()
+    cv2.destroyAllWindows()
+
 HOST = '127.0.0.1'             #호스트는 16x.xxx.xxx.xx 학교 서버 주소
 PORT = 9999
 

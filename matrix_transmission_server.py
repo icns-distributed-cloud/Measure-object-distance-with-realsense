@@ -4,6 +4,9 @@ import cv2
 import numpy
 from select import *
 from _thread import *
+from mask_rcnn import *
+
+mrcnn = MaskRCNN()
 
 def recvall(sock, count):
     buf = b''
@@ -58,7 +61,13 @@ def threaded(client_socket, addr):
 
 
             data = numpy.frombuffer(bgrdata, dtype="uint8")
-            decimg = cv2.imdecode(data,1)
+            decimg = cv2.imdecode(data,1)                            # data_arr : depth frame, decimg : bgr frame
+
+            boxes, classes, contours, centers = mrcnn.detect_objects_mask(decimg)
+
+            decimg = mrcnn.draw_object_mask(decimg)
+
+            mrcnn.draw_object_info(decimg, data_arr)
 
             cv2.imshow('Depth frame', data_arr)
             cv2.imshow('Bgr frame', decimg)
