@@ -10,7 +10,9 @@ enclosure_queue1 = Queue()
 enclosure_queue2 = Queue()
 
 rs = RealsenseCamera()
-
+"""
+websocket Data Transmission
+"""
 
 
 def data_transmission(queue1,queue2):
