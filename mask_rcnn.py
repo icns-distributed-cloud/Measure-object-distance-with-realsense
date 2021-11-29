@@ -2,6 +2,10 @@
 import cv2
 import numpy as np
 
+"""
+opencv MaskRCNN
+"""
+
 class MaskRCNN:
     def __init__(self):
         # Loading Mask RCNN
