@@ -7,6 +7,10 @@ from _thread import *
 from mask_rcnn import *
 
 mrcnn = MaskRCNN()
+"""
+websocket matrix transmission.
+I used pickle
+"""
 
 def recvall(sock, count):
     buf = b''
